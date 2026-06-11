@@ -2,6 +2,8 @@
 
 A production-quality bakery portfolio site built as a full-stack monorepo. Soft editorial luxury design language, four pages, REST API, and Docker Compose for one-command startup.
 
+<!-- asd -->
+
 ## Stack
 
 | Layer        | Technology                                                |
