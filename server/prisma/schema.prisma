@@ -1,0 +1,31 @@
+// This file is managed via Prisma migrations only. Never run `prisma db push`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cake {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  price       Float
+  category    String   // "Wedding" | "Birthday" | "Seasonal" | "Custom"
+  imageUrl    String
+  featured    Boolean  @default(false)
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
