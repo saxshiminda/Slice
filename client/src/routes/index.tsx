@@ -4,6 +4,7 @@ import { HomePage } from '@/pages/home-page';
 import { MenuPage } from '@/pages/menu-page';
 import { AboutPage } from '@/pages/about-page';
 import { ContactPage } from '@/pages/contact-page';
+import { OrderPage } from '@/pages/order-page';
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
       { path: 'menu', element: <MenuPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'contact', element: <ContactPage /> },
+      { path: 'order', element: <OrderPage /> },
     ],
   },
 ]);

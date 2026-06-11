@@ -61,7 +61,7 @@ export function Header() {
               </NavLink>
             ))}
             <Link
-              to="/contact"
+              to="/order"
               className="ml-4 px-5 py-2.5 text-sm font-sans font-medium bg-rose text-white hover:bg-rose-dark transition-colors"
             >
               Order Now
@@ -100,7 +100,7 @@ export function Header() {
               </NavLink>
             ))}
             <Link
-              to="/contact"
+              to="/order"
               onClick={closeMobileNav}
               className="mt-2 px-5 py-3 text-sm font-sans font-medium text-center bg-rose text-white"
             >
