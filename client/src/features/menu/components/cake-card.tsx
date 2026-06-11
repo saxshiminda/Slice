@@ -10,9 +10,10 @@ export function CakeCard({ cake }: Props) {
   const ref = useFadeIn<HTMLDivElement>();
 
   return (
-    <div ref={ref} style={{ opacity: 0 }}>
-      <Card hoverable className="group">
-        <div className="aspect-[4/3] overflow-hidden bg-warm">
+    <div ref={ref} style={{ opacity: 0 }} className="h-full">
+      <Card hoverable className="group flex flex-col h-full">
+        {/* Fixed-height image — always 240px regardless of source aspect ratio */}
+        <div className="h-60 flex-shrink-0 overflow-hidden bg-warm">
           <img
             src={cake.imageUrl}
             alt={cake.name}
@@ -20,12 +21,12 @@ export function CakeCard({ cake }: Props) {
             loading="lazy"
           />
         </div>
-        <div className="p-5 lg:p-6">
+        <div className="p-5 lg:p-6 flex flex-col flex-1">
           <div className="flex items-start justify-between gap-3 mb-2">
             <h3 className="font-display text-lg text-espresso leading-snug">{cake.name}</h3>
             <Badge category={cake.category} />
           </div>
-          <p className="text-sm text-espresso/60 leading-relaxed line-clamp-3 font-sans">
+          <p className="text-sm text-espresso/60 leading-relaxed line-clamp-3 font-sans flex-1">
             {cake.description}
           </p>
           <div className="mt-4 flex items-center justify-between">
