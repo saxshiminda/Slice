@@ -19,7 +19,7 @@ todos:
     status: completed
   - id: polish-docs
     content: Responsive pass, scroll/hover animations, README, conventional commits per phase
-    status: in_progress
+    status: completed
 isProject: false
 ---
 
