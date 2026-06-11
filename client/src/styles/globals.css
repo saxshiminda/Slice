@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Defined here directly so Tailwind doesn't need to see animate-fade-in-up in JSX */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @layer base {
   html {
     @apply font-sans text-espresso bg-warm;
@@ -17,11 +29,6 @@
 }
 
 @layer utilities {
-  .fade-in-up {
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
-  }
-
   .fade-in-up-visible {
     animation: fadeInUp 0.6s ease-out forwards;
   }
