@@ -1,4 +1,5 @@
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { useUiStore } from '@/store/ui';
 
 const navLinks = [
@@ -10,13 +11,24 @@ const navLinks = [
 export function Header() {
   const { mobileNavOpen, toggleMobileNav, closeMobileNav } = useUiStore();
   const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
 
   const isHome = location.pathname === '/';
 
+  useEffect(() => {
+    if (!isHome) return;
+    setScrolled(false);
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isHome]);
+
+  const opaque = !isHome || scrolled;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-        isHome ? 'bg-transparent' : 'bg-warm/95 backdrop-blur-sm border-b border-espresso/8'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        opaque ? 'bg-warm/95 backdrop-blur-sm border-b border-espresso/8' : 'bg-transparent'
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
@@ -24,7 +36,7 @@ export function Header() {
           <Link
             to="/"
             onClick={closeMobileNav}
-            className="font-display text-2xl lg:text-3xl tracking-tight text-espresso hover:text-rose transition-colors"
+            className={`font-display text-2xl lg:text-3xl tracking-tight transition-colors ${opaque ? 'text-espresso hover:text-rose' : 'text-warm hover:text-rose'}`}
           >
             Slice
           </Link>
@@ -37,7 +49,11 @@ export function Header() {
                 to={to}
                 className={({ isActive }) =>
                   `text-sm font-sans font-medium tracking-wide transition-colors ${
-                    isActive ? 'text-rose' : 'text-espresso/70 hover:text-espresso'
+                    isActive
+                      ? 'text-rose'
+                      : opaque
+                        ? 'text-espresso/70 hover:text-espresso'
+                        : 'text-warm/80 hover:text-warm'
                   }`
                 }
               >
