@@ -1,0 +1,34 @@
+---
+description: Backend coding rules for the Slice Express server
+globs: ["server/**"]
+---
+
+# Backend Rules
+
+## Layer Responsibilities
+- **Controllers** only: parse the request, call a service method, return the response. No business logic.
+- **Services** contain all business logic. Services are the only layer that calls Prisma.
+- **Routers** wire middleware + controllers to routes. No logic here.
+
+## Environment Variables
+- All environment variables are read exactly once in `server/src/config/env.ts` and exported as a typed object.
+- Never use `process.env` anywhere else in the codebase.
+
+## Error Handling
+- All errors must be thrown as `AppError` instances (or let Zod errors propagate as-is).
+- The central `errorHandler` middleware in `server/src/middleware/errorHandler.ts` is the only place that sends error responses to the client.
+- Never send raw errors, stack traces, or internal identifiers to the client.
+
+## Validation
+- Validate all request inputs (body, query, params) with Zod schemas defined in `*.schema.ts` files before they reach the controller.
+- Use the generic `validate` middleware to apply schemas to routes.
+
+## Auth Placeholder
+- `server/src/middleware/auth.ts` exists as a pass-through middleware (`req, res, next => next()`).
+- All routes that will eventually require auth should already use this middleware so JWT can be dropped in without restructuring routes.
+
+## Response Shape
+Always use the envelope format:
+```json
+{ "data": ..., "meta": { "total": 12 } }
+```

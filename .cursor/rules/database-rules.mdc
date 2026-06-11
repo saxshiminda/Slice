@@ -1,0 +1,27 @@
+---
+description: Database and Prisma conventions for the Slice project
+globs: ["server/prisma/**"]
+---
+
+# Database Rules
+
+## Migrations
+- Never edit the database directly. All schema changes go through `prisma migrate dev`.
+- Never run `prisma db push` in any environment — migrations only.
+- Migration names should be descriptive: `prisma migrate dev --name add-featured-flag-to-cake`.
+
+## Prisma Client
+- The Prisma client is a singleton instantiated in `server/src/lib/prisma.ts`.
+- Never instantiate `new PrismaClient()` anywhere else.
+
+## Seed Data
+- Seed data lives in `server/prisma/seed.ts`.
+- Seeds must be idempotent: safe to run multiple times without duplicating data.
+- Use `upsert` with a stable unique field (e.g. `name` for cakes) to ensure idempotency.
+- Run seeds with `npm run db:seed` from the server directory.
+
+## Schema Conventions
+- All models use `cuid()` as the default ID strategy (`@id @default(cuid())`).
+- All models include `createdAt DateTime @default(now())`.
+- Models that are updated include `updatedAt DateTime @updatedAt`.
+- Avoid nullable fields unless the data is genuinely optional.

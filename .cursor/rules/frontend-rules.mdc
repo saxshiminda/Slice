@@ -1,0 +1,33 @@
+---
+description: Frontend coding rules for the Slice React client
+globs: ["client/**"]
+---
+
+# Frontend Rules
+
+## API Calls
+- Never call `fetch()` or any HTTP client directly inside a component.
+- All API calls go through `client/src/lib/api.ts`, which wraps fetch with base URL and error handling.
+- Components consume data via React Query hooks only. Hooks are defined in `features/*/hooks/` or `hooks/`.
+
+## Components
+- Every component must export a typed `Props` interface. No inline prop types, no `any`.
+- No inline styles. Tailwind utility classes only.
+- Keep components focused: a component should do one thing. Extract sub-components when a component grows beyond ~100 lines.
+
+## State Management
+- Server state (API data, loading, error): React Query only.
+- Global UI state (modals, toasts, nav open): Zustand only.
+- Local, non-shared UI state: `useState` / `useReducer`.
+- Never store server data in Zustand. Never store UI-only state in React Query.
+
+## Zustand
+- Store files live in `client/src/store/`.
+- One store per concern (e.g. `ui.ts` for nav/modal state).
+
+## Imports
+- Use the `@/` alias for all src-relative imports: `import { Button } from '@/components/ui'`.
+- Never use relative `../../` imports that traverse more than one directory up.
+
+## Forms
+- Validate form inputs with Zod schemas (mirroring server schemas) before calling the mutation.

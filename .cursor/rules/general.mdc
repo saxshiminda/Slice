@@ -1,0 +1,38 @@
+---
+description: Stack overview, naming conventions, and commit style for the Slice project
+---
+
+# General Rules
+
+## Stack
+- Frontend: React 18 + Vite + TypeScript (strict)
+- Backend: Node.js + Express + TypeScript (strict)
+- Database: PostgreSQL via Prisma ORM
+- Styling: Tailwind CSS (no component library)
+- State: TanStack Query (server state) + Zustand (UI state)
+
+## TypeScript
+- Always use strict mode. `"strict": true` must be set in every `tsconfig.json`.
+- No `any`, ever. Use `unknown` and narrow with guards if needed.
+- Prefer explicit return types on public functions.
+
+## Naming Conventions
+- Variables and functions: `camelCase`
+- Components and types/interfaces: `PascalCase`
+- Files and directories: `kebab-case`
+- Constants: `UPPER_SNAKE_CASE` for true module-level constants
+
+## Commit Style
+Use conventional commits format:
+- `feat:` — new user-facing feature
+- `fix:` — bug fix
+- `chore:` — tooling, config, deps (no production code change)
+- `refactor:` — code restructure without behavior change
+- `docs:` — documentation only
+
+## Dependencies
+- Do not add new dependencies without a justification comment in the PR or commit message.
+- Check if existing utilities in the codebase already solve the need.
+
+## README
+- Keep `README.md` updated with every new npm script, environment variable, or migration step.

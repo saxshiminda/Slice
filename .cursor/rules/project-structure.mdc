@@ -1,0 +1,50 @@
+---
+description: Monorepo layout and folder conventions for the Slice project
+globs: ["**/*"]
+---
+
+# Project Structure Rules
+
+## Monorepo Layout
+- `/client` — React + Vite frontend
+- `/server` — Express + Prisma backend
+- Never put feature code in the repo root. Root-level files are config only.
+
+## Client Structure
+```
+client/src/
+├── assets/          # Static images, fonts, icons
+├── components/
+│   ├── ui/          # Base primitives: Button, Card, Input, etc.
+│   └── layout/      # Header, Footer, PageWrapper
+├── features/        # Feature-scoped folders
+│   └── menu/
+│       ├── components/
+│       ├── hooks/
+│       └── types.ts
+├── hooks/           # Shared custom hooks
+├── lib/             # API client, query client
+├── pages/           # Route-level page components
+├── routes/          # React Router config
+├── store/           # Zustand stores
+├── styles/          # Global CSS, Tailwind base
+└── types/           # Shared TypeScript types
+```
+
+## Server Structure
+```
+server/src/
+├── config/          # env.ts — only place process.env is read
+├── lib/             # prisma.ts singleton
+├── middleware/      # errorHandler, logger, validate, auth placeholder
+└── modules/
+    └── menu/        # menu.router, menu.controller, menu.service, menu.schema
+```
+
+## Barrel Exports
+- Every `components/`, `features/`, and `modules/` subfolder must have an `index.ts` that re-exports its public API.
+- Import from the folder, not the file: `import { Button } from '@/components/ui'` not `'@/components/ui/button'`.
+
+## Shared Types
+- `client/src/types/` holds types shared across the frontend.
+- Design them to be extractable into a shared package later (no browser or Node-specific imports).
