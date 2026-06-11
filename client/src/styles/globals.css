@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply font-sans text-espresso bg-warm;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .fade-in-up {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .fade-in-up-visible {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+}
