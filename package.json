@@ -8,8 +8,11 @@
   ],
   "scripts": {
     "dev": "docker compose up",
+    "dev:prod": "docker compose -f docker-compose.prod.yml up --build",
     "lint": "npm run lint --workspaces --if-present",
+    "build": "npm run build --workspace=client && npm run build --workspace=server",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\" --ignore-path .gitignore",
+    "images": "sh scripts/download-images.sh",
     "prepare": "husky"
   },
   "devDependencies": {

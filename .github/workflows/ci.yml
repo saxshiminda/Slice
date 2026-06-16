@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: slice
+          POSTGRES_PASSWORD: slice
+          POSTGRES_DB: slice_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U slice -d slice_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://slice:slice@localhost:5432/slice_db
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Generate Prisma client
+        working-directory: server
+        run: npx prisma generate
+
+      - name: Run migrations
+        working-directory: server
+        run: npx prisma migrate deploy
+
+      - name: Build server
+        working-directory: server
+        run: npm run build
+
+      - name: Build client
+        working-directory: client
+        run: npm run build

@@ -1,3 +1,4 @@
 export { Header } from './header';
 export { Footer } from './footer';
 export { PageWrapper } from './page-wrapper';
+export { ScrollToTop } from './scroll-to-top';

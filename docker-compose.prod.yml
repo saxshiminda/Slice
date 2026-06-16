@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: slice
+      POSTGRES_PASSWORD: slice
+      POSTGRES_DB: slice_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U slice -d slice_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://slice:slice@db:5432/slice_db
+      PORT: 3001
+      CLIENT_URL: http://localhost:3001
+      NODE_ENV: production
+      STATIC_DIR: /app/public
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

@@ -1,6 +1,6 @@
 # Slice — Artisan Cake Portfolio Website
 
-A production-quality bakery portfolio site built as a full-stack monorepo. Soft editorial luxury design language, four pages, REST API, and Docker Compose for one-command startup.
+A production-quality bakery portfolio site built as a full-stack monorepo. Soft editorial luxury design language, six public pages, REST API, and Docker Compose for one-command startup.
 
 ## Stack
 
@@ -15,7 +15,20 @@ A production-quality bakery portfolio site built as a full-stack monorepo. Soft 
 | ORM          | Prisma                                                    |
 | Database     | PostgreSQL 16                                             |
 | Validation   | Zod (server schemas mirrored on client)                   |
-| Infra        | Docker Compose                                            |
+| Infra        | Docker Compose (dev + production)                         |
+| CI           | GitHub Actions                                            |
+
+## Pages
+
+| Route       | Description                                      |
+| ----------- | ------------------------------------------------ |
+| `/`         | Home — hero, featured cakes, brand story         |
+| `/menu`     | Full menu with category filter, search, and sort |
+| `/menu/:id` | Cake detail — full description and order CTA     |
+| `/about`    | Brand story and values                           |
+| `/contact`  | General enquiry form                             |
+| `/order`    | Structured order request form                    |
+| `*`         | Styled 404 page                                  |
 
 ## Project Structure
 
@@ -23,15 +36,16 @@ A production-quality bakery portfolio site built as a full-stack monorepo. Soft 
 slice/
 ├── client/                 # React + Vite frontend
 │   └── src/
-│       ├── components/     # UI primitives and layout
-│       ├── features/       # Feature-scoped folders (menu, contact)
-│       ├── hooks/          # Shared custom hooks
-│       ├── lib/            # API client, React Query setup
+│       ├── components/     # UI primitives, layout, error boundary
+│       ├── features/       # Feature-scoped folders (menu, contact, order)
+│       ├── hooks/          # Shared custom hooks (fade-in, scroll-to-top)
+│       ├── lib/            # API client, images, React Query setup
 │       ├── pages/          # Route-level page components
 │       ├── routes/         # React Router config
 │       ├── store/          # Zustand stores
 │       ├── styles/         # Tailwind global CSS
 │       └── types/          # Shared TypeScript types
+│   └── public/images/      # Local cake and site images (no hotlinks)
 │
 ├── server/                 # Express + Prisma backend
 │   ├── prisma/
@@ -46,12 +60,17 @@ slice/
 │           ├── menu/       # cakes API
 │           └── inquiry/    # contact form API
 │
+├── scripts/
+│   └── download-images.sh  # Fetch images into client/public/images/
+├── .github/workflows/      # CI pipeline
+├── docker-compose.yml      # Development (db + server + client)
+├── docker-compose.prod.yml # Production (db + single app container)
+├── Dockerfile.prod         # Multi-stage production build
 ├── .cursor/rules/          # Cursor AI coding rules
-├── docker-compose.yml
 └── .env.example
 ```
 
-## Quick Start (Docker)
+## Quick Start (Docker — Development)
 
 Requires Docker + Docker Compose.
 
@@ -59,15 +78,33 @@ Requires Docker + Docker Compose.
 # 1. Copy and review environment config
 cp .env.example .env
 
-# 2. Start all three services (db, server, client)
+# 2. Download local images (first time only)
+npm run images
+
+# 3. Start all three services (db, server, client)
 docker compose up
 
-# 3. In a new terminal, run migrations and seed
+# 4. In a new terminal, run migrations and seed
 docker compose exec server npx prisma migrate deploy
 docker compose exec server npm run db:seed
 ```
 
 The client runs at **http://localhost:5173**, the API at **http://localhost:3001**.
+
+## Production (Docker)
+
+Single-container deployment — Express serves the built React app and API on one port.
+
+```bash
+cp .env.example .env
+npm run dev:prod
+# App available at http://localhost:3001
+
+# Seed after first start (optional)
+docker compose -f docker-compose.prod.yml exec app npx prisma db seed
+```
+
+The production image runs migrations automatically on startup. Set `CLIENT_URL` to your public URL in production.
 
 ## Local Development (without Docker)
 
@@ -82,40 +119,58 @@ cd ../server && npm install
 # 2. Copy env and set DATABASE_URL to your local Postgres
 cp .env.example .env
 
-# 3. Run migrations
+# 3. Download images
+npm run images
+
+# 4. Run migrations
 cd server && npm run db:migrate
 
-# 4. Seed the database
+# 5. Seed the database
 npm run db:seed
 
-# 5. Start the server (port 3001)
+# 6. Start the server (port 3001)
 npm run dev
 
-# 6. In a separate terminal, start the client (port 5173)
+# 7. In a separate terminal, start the client (port 5173)
 cd client && npm run dev
+```
+
+### Serving production build locally
+
+```bash
+npm run build
+cd server
+STATIC_DIR=../client/dist NODE_ENV=production npm start
+# Open http://localhost:3001
 ```
 
 ## Environment Variables
 
-| Variable       | Description                  | Default                                            |
-| -------------- | ---------------------------- | -------------------------------------------------- |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://slice:slice@localhost:5432/slice_db` |
-| `PORT`         | Express server port          | `3001`                                             |
-| `CLIENT_URL`   | CORS-allowed origin          | `http://localhost:5173`                            |
-| `NODE_ENV`     | Runtime environment          | `development`                                      |
-| `VITE_API_URL` | Client-side API base URL     | `http://localhost:3001`                            |
+| Variable       | Description                            | Default                                            |
+| -------------- | -------------------------------------- | -------------------------------------------------- |
+| `DATABASE_URL` | PostgreSQL connection string           | `postgresql://slice:slice@localhost:5432/slice_db` |
+| `PORT`         | Express server port                    | `3001`                                             |
+| `CLIENT_URL`   | CORS-allowed origin                    | `http://localhost:5173`                            |
+| `NODE_ENV`     | Runtime environment                    | `development`                                      |
+| `STATIC_DIR`   | Path to built client (production only) | unset                                              |
+| `VITE_API_URL` | Client-side API base URL               | `http://localhost:3001`                            |
 
 > When running via Docker Compose, `DATABASE_URL` uses `db` (the service name) as host instead of `localhost`.
+>
+> In production, leave `VITE_API_URL` empty so the client calls the API on the same origin.
 
 ## Scripts
 
 ### Root
 
-| Script           | Description                                 |
-| ---------------- | ------------------------------------------- |
-| `npm run dev`    | Starts all services via `docker compose up` |
-| `npm run lint`   | Runs ESLint across client and server        |
-| `npm run format` | Runs Prettier across all files              |
+| Script             | Description                                           |
+| ------------------ | ----------------------------------------------------- |
+| `npm run dev`      | Starts all services via `docker compose up`           |
+| `npm run dev:prod` | Starts production stack via `docker-compose.prod.yml` |
+| `npm run build`    | Builds client and server                              |
+| `npm run lint`     | Runs ESLint across client and server                  |
+| `npm run format`   | Runs Prettier across all files                        |
+| `npm run images`   | Downloads cake/site images to `client/public/`        |
 
 ### Server (`cd server`)
 
@@ -123,6 +178,7 @@ cd client && npm run dev
 | -------------------- | ------------------------------------------------ |
 | `npm run dev`        | Start server with hot reload (tsx watch)         |
 | `npm run build`      | Compile TypeScript to `dist/`                    |
+| `npm run start`      | Run compiled server (`node dist/index.js`)       |
 | `npm run db:migrate` | Run a new Prisma migration (dev)                 |
 | `npm run db:deploy`  | Apply pending migrations (production/CI)         |
 | `npm run db:seed`    | Seed the database with sample cakes (idempotent) |
@@ -163,6 +219,21 @@ All responses use the envelope format:
 }
 ```
 
+## Images
+
+Cake and site images are stored locally in `client/public/images/` — no runtime dependency on external CDNs.
+
+- Cake thumbnails: `client/public/images/cakes/{slug}.jpg`
+- Site hero bands: `client/public/images/site/hero.jpg`, `inspo.jpg`
+- Seed data references paths like `/images/cakes/grand-ivory-wedding.jpg`
+
+To refresh images from source:
+
+```bash
+npm run images
+docker compose exec server npm run db:seed   # update DB imageUrl values
+```
+
 ## Design Tokens
 
 | Token      | Value     | Usage                     |
@@ -174,6 +245,17 @@ All responses use the envelope format:
 | `cream`    | `#F2EDE7` | Card / surface background |
 
 Fonts: **Cormorant Garamond** (display headings) + **DM Sans** (body text), loaded via Google Fonts.
+
+## CI
+
+GitHub Actions runs on push/PR to `main` or `master`:
+
+1. `npm ci`
+2. `npm run lint`
+3. Prisma migrate deploy
+4. Server and client production builds
+
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Adding Auth
 
