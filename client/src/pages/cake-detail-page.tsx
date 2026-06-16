@@ -60,7 +60,7 @@ export function CakeDetailPage() {
               <Badge category={cake.category} />
             </div>
 
-            <p className="font-display text-3xl text-espresso mb-6">
+            <p className="price text-3xl font-medium text-espresso mb-6">
               £{cake.price.toLocaleString('en-GB', { minimumFractionDigits: 0 })}
               <span className="font-sans text-sm text-espresso/40 ml-2">guide price</span>
             </p>

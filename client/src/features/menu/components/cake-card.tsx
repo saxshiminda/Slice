@@ -32,7 +32,7 @@ export function CakeCard({ cake }: Props) {
               {cake.description}
             </p>
             <div className="mt-4 flex items-center justify-between">
-              <span className="font-display text-xl text-espresso">
+              <span className="price text-xl text-espresso">
                 £{cake.price.toLocaleString('en-GB', { minimumFractionDigits: 0 })}
               </span>
               {cake.featured && (

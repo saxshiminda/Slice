@@ -32,4 +32,8 @@
   .fade-in-up-visible {
     animation: fadeInUp 0.6s ease-out forwards;
   }
+
+  .price {
+    @apply font-sans tabular-nums lining-nums tracking-tight;
+  }
 }
