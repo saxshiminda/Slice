@@ -1,16 +1,31 @@
-import { useState } from 'react';
-import { useCakes, CakeCard, CategoryFilter } from '@/features/menu';
-import { Spinner } from '@/components/ui';
+import { useMemo, useState } from 'react';
+import {
+  useCakes,
+  CakeCard,
+  CakeCardSkeleton,
+  MenuToolbar,
+  filterAndSortCakes,
+  type SortOption,
+} from '@/features/menu';
 import type { CakeCategory } from '@/types';
 
 type FilterOption = CakeCategory | 'All';
 
+const SKELETON_COUNT = 6;
+
 export function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState<FilterOption>('All');
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState<SortOption>('default');
 
   const { data, isLoading, isError } = useCakes({
     category: selectedCategory,
   });
+
+  const displayedCakes = useMemo(
+    () => (data ? filterAndSortCakes(data.cakes, search, sort) : []),
+    [data, search, sort]
+  );
 
   return (
     <main className="min-h-screen pt-16 lg:pt-20">
@@ -29,15 +44,24 @@ export function MenuPage() {
       {/* Filter bar */}
       <section className="sticky top-16 lg:top-20 z-10 bg-warm/95 backdrop-blur-sm border-b border-espresso/8">
         <div className="max-w-6xl mx-auto px-6 lg:px-8 py-4">
-          <CategoryFilter selected={selectedCategory} onChange={setSelectedCategory} />
+          <MenuToolbar
+            search={search}
+            onSearchChange={setSearch}
+            sort={sort}
+            onSortChange={setSort}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
         </div>
       </section>
 
       {/* Cake grid */}
       <section className="max-w-6xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
         {isLoading && (
-          <div className="flex justify-center py-24">
-            <Spinner size="lg" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+            {Array.from({ length: SKELETON_COUNT }, (_, i) => (
+              <CakeCardSkeleton key={i} />
+            ))}
           </div>
         )}
 
@@ -49,21 +73,26 @@ export function MenuPage() {
           </div>
         )}
 
-        {data && data.cakes.length === 0 && (
+        {data && displayedCakes.length === 0 && (
           <div className="text-center py-24">
             <p className="font-display text-2xl text-espresso/40 mb-2">Nothing here yet</p>
-            <p className="font-sans text-sm text-espresso/40">No cakes found in this category.</p>
+            <p className="font-sans text-sm text-espresso/40">
+              {search
+                ? 'No cakes match your search. Try a different term.'
+                : 'No cakes found in this category.'}
+            </p>
           </div>
         )}
 
-        {data && data.cakes.length > 0 && (
+        {data && displayedCakes.length > 0 && (
           <>
             <p className="font-sans text-xs text-espresso/40 mb-8">
-              {data.total} {data.total === 1 ? 'cake' : 'cakes'}
+              {displayedCakes.length} of {data.total} {data.total === 1 ? 'cake' : 'cakes'}
               {selectedCategory !== 'All' ? ` in ${selectedCategory}` : ''}
+              {search ? ` matching "${search}"` : ''}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-              {data.cakes.map((cake) => (
+              {displayedCakes.map((cake) => (
                 <CakeCard key={cake.id} cake={cake} />
               ))}
             </div>

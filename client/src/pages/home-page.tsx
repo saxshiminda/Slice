@@ -2,15 +2,13 @@ import { Link } from 'react-router-dom';
 import { useCakes, CakeCard } from '@/features/menu';
 import { Spinner } from '@/components/ui';
 import { useFadeIn } from '@/hooks/use-fade-in';
-
-const UNSPLASH = (id: string, w = 1600, h = 900) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
+import { SITE_IMAGES } from '@/lib/images';
 
 function HeroSection() {
   return (
     <section className="relative h-screen min-h-[640px] overflow-hidden">
       <img
-        src={UNSPLASH('1578985545062-69928b1d9587')}
+        src={SITE_IMAGES.hero}
         alt="An exquisite mirror-glaze cake"
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -57,11 +55,7 @@ function BrandStatement() {
   return (
     <section className="py-20 lg:py-28 bg-gradient-to-br from-warm to-cream">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        <div
-          ref={ref}
-          style={{ opacity: 0 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center"
-        >
+        <div ref={ref} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           <div>
             <span className="inline-block w-10 h-0.5 bg-rose mb-6" />
             <h2 className="font-display text-4xl lg:text-5xl text-espresso leading-tight">
@@ -122,11 +116,7 @@ function FeaturedCakes() {
   return (
     <section className="py-20 lg:py-28 bg-cream">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        <div
-          ref={headerRef}
-          style={{ opacity: 0 }}
-          className="flex items-end justify-between mb-12 lg:mb-16"
-        >
+        <div ref={headerRef} className="flex items-end justify-between mb-12 lg:mb-16">
           <div>
             <p className="font-sans text-xs tracking-widest uppercase text-rose/80 mb-3">
               Selected Works
@@ -180,16 +170,12 @@ function InspoBand() {
   return (
     <section className="relative py-24 lg:py-32 overflow-hidden">
       <img
-        src={UNSPLASH('1464349095431-e9a21285b5f3')}
+        src={SITE_IMAGES.inspo}
         alt="Elegant tiered wedding cake"
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-espresso/60" />
-      <div
-        ref={ref}
-        style={{ opacity: 0 }}
-        className="relative max-w-6xl mx-auto px-6 lg:px-8 text-center"
-      >
+      <div ref={ref} className="relative max-w-6xl mx-auto px-6 lg:px-8 text-center">
         <p className="font-sans text-xs tracking-widest uppercase text-rose mb-4">Made to order</p>
         <h2 className="font-display text-4xl lg:text-6xl text-warm max-w-2xl mx-auto leading-tight">
           Every cake tells a different story.
@@ -204,7 +190,7 @@ function CtaBanner() {
 
   return (
     <section className="bg-rose py-20 lg:py-28 px-6 lg:px-8">
-      <div ref={ref} style={{ opacity: 0 }} className="max-w-6xl mx-auto text-center">
+      <div ref={ref} className="max-w-6xl mx-auto text-center">
         <h2 className="font-display text-4xl lg:text-5xl text-white mb-4">
           Have something in mind?
         </h2>

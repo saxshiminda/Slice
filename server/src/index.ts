@@ -1,3 +1,4 @@
+import path from 'node:path';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -20,6 +21,14 @@ app.get('/api/health', (_req, res) => {
 
 app.use('/api/cakes', menuRouter);
 app.use('/api/inquiries', inquiryRouter);
+
+if (env.staticDir) {
+  const staticPath = path.resolve(env.staticDir);
+  app.use(express.static(staticPath));
+  app.get(/^(?!\/api).*/, (_req, res) => {
+    res.sendFile(path.join(staticPath, 'index.html'));
+  });
+}
 
 app.use(errorHandler);
 

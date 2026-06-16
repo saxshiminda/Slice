@@ -7,11 +7,7 @@ export function ContactPage() {
   return (
     <main className="min-h-screen pt-16 lg:pt-20">
       <section className="max-w-6xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
-        <div
-          ref={ref}
-          style={{ opacity: 0 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24"
-        >
+        <div ref={ref} className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Left — intro text */}
           <div>
             <p className="font-sans text-xs tracking-widest uppercase text-espresso/40 mb-3">
