@@ -13,4 +13,6 @@ export const env = {
   port: parseInt(process.env['PORT'] ?? '3001', 10),
   clientUrl: process.env['CLIENT_URL'] ?? 'http://localhost:5173',
   nodeEnv: (process.env['NODE_ENV'] ?? 'development') as 'development' | 'production' | 'test',
+  /** When set, Express serves the built client and SPA fallback (production). */
+  staticDir: process.env['STATIC_DIR'],
 };
