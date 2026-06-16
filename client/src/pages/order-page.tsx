@@ -28,7 +28,7 @@ export function OrderPage() {
     <main className="min-h-screen pt-16 lg:pt-20">
       {/* Page header */}
       <section className="bg-espresso py-16 lg:py-24 px-6 lg:px-8">
-        <div ref={heroRef} style={{ opacity: 0 }} className="max-w-6xl mx-auto">
+        <div ref={heroRef} className="max-w-6xl mx-auto">
           <p className="font-sans text-xs tracking-widest uppercase text-rose mb-3">
             Place an Order
           </p>
@@ -45,11 +45,7 @@ export function OrderPage() {
 
       {/* How it works strip */}
       <section className="bg-cream py-12 px-6 lg:px-8 border-b border-espresso/8">
-        <div
-          ref={stepsRef}
-          style={{ opacity: 0 }}
-          className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8"
-        >
+        <div ref={stepsRef} className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
           {steps.map(({ n, title, body }) => (
             <div key={n} className="flex gap-4">
               <span className="font-display text-3xl text-rose/40 leading-none flex-shrink-0">

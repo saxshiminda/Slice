@@ -1,8 +1,6 @@
 import { useFadeIn } from '@/hooks/use-fade-in';
 import { Link } from 'react-router-dom';
-
-const UNSPLASH = (id: string, w = 600, h = 800) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
+import { SITE_IMAGES, cakeImagePath } from '@/lib/images';
 
 const values = [
   {
@@ -38,7 +36,7 @@ export function AboutPage() {
       {/* Hero */}
       <section className="py-20 lg:py-32 px-6 lg:px-8">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-          <div ref={storyRef} style={{ opacity: 0 }}>
+          <div ref={storyRef}>
             <p className="font-sans text-xs tracking-widest uppercase text-rose mb-4">Our Story</p>
             <h1 className="font-display text-5xl lg:text-6xl text-espresso leading-tight mb-8">
               Baked with patience. Designed with care.
@@ -57,13 +55,9 @@ export function AboutPage() {
             </p>
           </div>
 
-          <div
-            ref={imageRef}
-            style={{ opacity: 0 }}
-            className="aspect-[3/4] overflow-hidden bg-cream"
-          >
+          <div ref={imageRef} className="aspect-[3/4] overflow-hidden bg-cream">
             <img
-              src={UNSPLASH('1551106652-a5bcf4b29ab6')}
+              src={SITE_IMAGES.aboutBaker}
               alt="Our baker at work"
               className="w-full h-full object-cover"
             />
@@ -74,7 +68,7 @@ export function AboutPage() {
       {/* Values */}
       <section className="py-20 lg:py-28 bg-espresso">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div ref={valuesRef} style={{ opacity: 0 }}>
+          <div ref={valuesRef}>
             <p className="font-sans text-xs tracking-widest uppercase text-rose mb-3">
               What We Believe
             </p>
@@ -94,28 +88,28 @@ export function AboutPage() {
 
       {/* Gallery strip */}
       <section className="py-20 lg:py-28 bg-cream">
-        <div ref={galleryRef} style={{ opacity: 0 }} className="max-w-6xl mx-auto px-6 lg:px-8">
+        <div ref={galleryRef} className="max-w-6xl mx-auto px-6 lg:px-8">
           <p className="font-sans text-xs tracking-widest uppercase text-espresso/40 mb-10 text-center">
             From the Studio
           </p>
           <div className="grid grid-cols-3 gap-3 lg:gap-4">
             <div className="aspect-square overflow-hidden">
               <img
-                src={UNSPLASH('1535141192574-5d4897c12636', 400, 400)}
+                src={cakeImagePath('strawberry-midsummer')}
                 alt="Cake detail"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div className="aspect-square overflow-hidden">
               <img
-                src={UNSPLASH('1571115177098-24ec42ed204d', 400, 400)}
+                src={cakeImagePath('bespoke-portrait-cake')}
                 alt="Floral cake"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div className="aspect-square overflow-hidden">
               <img
-                src={UNSPLASH('1565958011703-44f9829ba187', 400, 400)}
+                src={SITE_IMAGES.gallerySlices}
                 alt="Cake slices"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
