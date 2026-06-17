@@ -14,3 +14,16 @@ export async function createInquiry(
     next(err);
   }
 }
+
+export async function listInquiries(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { inquiries, total } = await inquiryService.listInquiries();
+    res.json({ data: inquiries, meta: { total } });
+  } catch (err) {
+    next(err);
+  }
+}

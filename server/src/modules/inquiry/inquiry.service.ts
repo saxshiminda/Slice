@@ -9,3 +9,10 @@ export async function createInquiry(input: CreateInquiryInput) {
 
   return inquiry;
 }
+
+export async function listInquiries() {
+  const inquiries = await prisma.inquiry.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+  return { inquiries, total: inquiries.length };
+}
