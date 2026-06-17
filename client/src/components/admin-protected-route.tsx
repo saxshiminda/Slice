@@ -5,7 +5,7 @@ export function AdminProtectedRoute() {
   const token = useAuthStore((s) => s.token);
 
   if (!token) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
