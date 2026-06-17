@@ -26,6 +26,9 @@ Thumbs.db
 # Docker data
 pgdata/
 
+# Uploaded images (admin uploads)
+server/uploads/
+
 # Logs
 logs/
 *.log
