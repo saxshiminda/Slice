@@ -10,6 +10,7 @@ import {
   type CakeInput,
 } from '@/features/admin';
 import { resolveImageSrc } from '@/lib/images';
+import { useT } from '@/i18n';
 import type { Cake } from '@/types';
 
 const emptyForm: CakeInput = {
@@ -23,6 +24,7 @@ const emptyForm: CakeInput = {
 };
 
 export function AdminCakesPage() {
+  const t = useT();
   const { data: cakes, isLoading } = useAdminCakes();
   const { data: categories = [] } = useAdminCategories();
   const createCake = useCreateCake();
@@ -69,7 +71,7 @@ export function AdminCakesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this cake?')) return;
+    if (!confirm(t.admin.cakes.confirmDelete)) return;
     await deleteCake.mutateAsync(id);
   }
 
@@ -85,11 +87,11 @@ export function AdminCakesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-display text-3xl text-espresso">Cakes</h1>
-          <p className="font-sans text-sm text-espresso/50 mt-1">Manage menu items and details</p>
+          <h1 className="font-display text-3xl text-espresso">{t.admin.cakes.title}</h1>
+          <p className="font-sans text-sm text-espresso/50 mt-1">{t.admin.cakes.subtitle}</p>
         </div>
         <Button type="button" onClick={openCreate}>
-          Add cake
+          {t.admin.cakes.addCake}
         </Button>
       </div>
 
@@ -99,19 +101,19 @@ export function AdminCakesPage() {
           className="bg-cream p-6 lg:p-8 mb-8 border border-espresso/10 space-y-4 max-w-4xl mx-auto"
         >
           <h2 className="font-display text-xl text-espresso text-center lg:text-left">
-            {editing ? 'Edit cake' : 'New cake'}
+            {editing ? t.admin.cakes.editCake : t.admin.cakes.newCake}
           </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
-                  label="Name"
+                  label={t.admin.cakes.name}
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 />
                 <Input
-                  label="Price (£)"
+                  label={t.admin.cakes.price}
                   type="number"
                   value={form.price || ''}
                   onChange={(e) => setForm((f) => ({ ...f, price: Number(e.target.value) }))}
@@ -120,7 +122,7 @@ export function AdminCakesPage() {
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-sans font-medium text-espresso/80">
-                  Description
+                  {t.admin.cakes.description}
                 </label>
                 <textarea
                   value={form.description}
@@ -131,7 +133,9 @@ export function AdminCakesPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-sans font-medium text-espresso/80">Category</label>
+                <label className="text-sm font-sans font-medium text-espresso/80">
+                  {t.admin.cakes.category}
+                </label>
                 <select
                   value={form.categoryId}
                   onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
@@ -152,7 +156,7 @@ export function AdminCakesPage() {
                     checked={form.featured}
                     onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
                   />
-                  Featured
+                  {t.admin.cakes.featured}
                 </label>
                 <label className="flex items-center gap-2 text-sm font-sans text-espresso/70">
                   <input
@@ -160,7 +164,7 @@ export function AdminCakesPage() {
                     checked={form.available}
                     onChange={(e) => setForm((f) => ({ ...f, available: e.target.checked }))}
                   />
-                  Available
+                  {t.admin.cakes.available}
                 </label>
               </div>
             </div>
@@ -173,10 +177,10 @@ export function AdminCakesPage() {
 
           <div className="flex gap-3 pt-2">
             <Button type="submit" loading={createCake.isPending || updateCake.isPending}>
-              {editing ? 'Save changes' : 'Create cake'}
+              {editing ? t.admin.cakes.saveChanges : t.admin.cakes.createCake}
             </Button>
             <Button type="button" variant="secondary" onClick={closeForm}>
-              Cancel
+              {t.common.cancel}
             </Button>
           </div>
         </form>
@@ -186,12 +190,12 @@ export function AdminCakesPage() {
         <table className="w-full text-sm font-sans">
           <thead>
             <tr className="border-b border-espresso/10 text-left text-espresso/50">
-              <th className="p-4 font-medium w-20">Image</th>
-              <th className="p-4 font-medium">Name</th>
-              <th className="p-4 font-medium">Category</th>
-              <th className="p-4 font-medium">Price</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Actions</th>
+              <th className="p-4 font-medium w-20">{t.admin.cakes.image}</th>
+              <th className="p-4 font-medium">{t.admin.cakes.name}</th>
+              <th className="p-4 font-medium">{t.admin.cakes.category}</th>
+              <th className="p-4 font-medium">{t.admin.cakes.price}</th>
+              <th className="p-4 font-medium">{t.admin.cakes.status}</th>
+              <th className="p-4 font-medium">{t.admin.cakes.actions}</th>
             </tr>
           </thead>
           <tbody>
@@ -212,10 +216,10 @@ export function AdminCakesPage() {
                 </td>
                 <td className="p-4 text-espresso">{cake.name}</td>
                 <td className="p-4 text-espresso/70">{cake.category.name}</td>
-                <td className="p-4 price text-espresso">£{cake.price}</td>
+                <td className="p-4 text-espresso">₾{cake.price}</td>
                 <td className="p-4 text-espresso/70">
-                  {cake.available ? 'Available' : 'Hidden'}
-                  {cake.featured ? ' · Featured' : ''}
+                  {cake.available ? t.admin.cakes.available : t.admin.cakes.hidden}
+                  {cake.featured ? ` · ${t.admin.cakes.featured}` : ''}
                 </td>
                 <td className="p-4">
                   <div className="flex gap-3">
@@ -224,14 +228,14 @@ export function AdminCakesPage() {
                       onClick={() => openEdit(cake)}
                       className="text-rose hover:text-rose-dark"
                     >
-                      Edit
+                      {t.common.edit}
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDelete(cake.id)}
                       className="text-espresso/40 hover:text-red-500"
                     >
-                      Delete
+                      {t.common.delete}
                     </button>
                   </div>
                 </td>

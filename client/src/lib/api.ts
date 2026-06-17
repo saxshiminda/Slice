@@ -1,9 +1,14 @@
 const BASE_URL = import.meta.env['VITE_API_URL'] ?? '';
 
 let authToken: string | null = null;
+let customerToken: string | null = null;
 
 export function setAuthToken(token: string | null): void {
   authToken = token;
+}
+
+export function setCustomerAuthToken(token: string | null): void {
+  customerToken = token;
 }
 
 class ApiError extends Error {
@@ -23,8 +28,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     ...((init?.headers as Record<string, string>) ?? {}),
   };
 
-  if (authToken) {
-    headers['Authorization'] = `Bearer ${authToken}`;
+  // Admin token takes precedence; fall back to customer token
+  const token = authToken ?? customerToken;
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   const res = await fetch(`${BASE_URL}${path}`, {

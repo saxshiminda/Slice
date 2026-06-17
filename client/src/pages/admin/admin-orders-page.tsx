@@ -1,5 +1,6 @@
 import { useAdminOrders } from '@/features/admin';
 import { Spinner } from '@/components/ui';
+import { useT } from '@/i18n';
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', {
@@ -12,6 +13,7 @@ function formatDate(iso: string) {
 }
 
 export function AdminOrdersPage() {
+  const t = useT();
   const { data: orders, isLoading } = useAdminOrders();
 
   if (isLoading) {
@@ -24,13 +26,11 @@ export function AdminOrdersPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl text-espresso mb-2">Orders</h1>
-      <p className="font-sans text-sm text-espresso/50 mb-8">
-        Structured order requests from the order form.
-      </p>
+      <h1 className="font-display text-3xl text-espresso mb-2">{t.admin.bespokeOrders.title}</h1>
+      <p className="font-sans text-sm text-espresso/50 mb-8">{t.admin.bespokeOrders.subtitle}</p>
 
       {!orders?.length ? (
-        <p className="font-sans text-sm text-espresso/40">No orders yet.</p>
+        <p className="font-sans text-sm text-espresso/40">{t.admin.bespokeOrders.noOrders}</p>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
@@ -45,19 +45,27 @@ export function AdminOrdersPage() {
 
               <dl className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm font-sans mb-4">
                 <div>
-                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">Event</dt>
+                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">
+                    {t.admin.bespokeOrders.event}
+                  </dt>
                   <dd className="text-espresso">{order.eventType}</dd>
                 </div>
                 <div>
-                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">Date</dt>
+                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">
+                    {t.admin.bespokeOrders.date}
+                  </dt>
                   <dd className="text-espresso">{order.eventDate}</dd>
                 </div>
                 <div>
-                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">Servings</dt>
+                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">
+                    {t.admin.bespokeOrders.servings}
+                  </dt>
                   <dd className="text-espresso">{order.servings}</dd>
                 </div>
                 <div>
-                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">Category</dt>
+                  <dt className="text-espresso/40 text-xs uppercase tracking-wide">
+                    {t.admin.bespokeOrders.category}
+                  </dt>
                   <dd className="text-espresso">{order.category?.name ?? '—'}</dd>
                 </div>
               </dl>

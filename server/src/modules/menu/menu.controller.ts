@@ -59,3 +59,58 @@ export async function removeCake(req: Request, res: Response, next: NextFunction
     next(err);
   }
 }
+
+export async function listVariants(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const variants = await menuService.listVariants(req.params['cakeId'] as string);
+    res.json({ data: variants });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createVariant(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const variant = await menuService.createVariant(req.params['cakeId'] as string, req.body);
+    res.status(201).json({ data: variant });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateVariant(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const variant = await menuService.updateVariant(
+      req.params['cakeId'] as string,
+      req.params['variantId'] as string,
+      req.body
+    );
+    res.json({ data: variant });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function removeVariant(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    await menuService.deleteVariant(
+      req.params['cakeId'] as string,
+      req.params['variantId'] as string
+    );
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}

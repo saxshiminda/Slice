@@ -1,28 +1,12 @@
 import { OrderForm } from '@/features/order';
 import { useFadeIn } from '@/hooks/use-fade-in';
 import { Link } from 'react-router-dom';
-
-const steps = [
-  {
-    n: '01',
-    title: 'Submit your request',
-    body: 'Fill in the form with your event details and any design ideas you have in mind.',
-  },
-  {
-    n: '02',
-    title: 'We get in touch',
-    body: 'Within 48 hours we will reach out to discuss flavours, design, and confirm availability.',
-  },
-  {
-    n: '03',
-    title: 'Your cake is made',
-    body: 'We bake everything to order. Your cake arrives fresh, exactly as designed.',
-  },
-];
+import { useT } from '@/i18n';
 
 export function OrderPage() {
   const heroRef = useFadeIn<HTMLDivElement>();
   const stepsRef = useFadeIn<HTMLDivElement>();
+  const t = useT();
 
   return (
     <main className="min-h-screen pt-16 lg:pt-20">
@@ -30,26 +14,22 @@ export function OrderPage() {
       <section className="bg-espresso py-16 lg:py-24 px-6 lg:px-8">
         <div ref={heroRef} className="max-w-6xl mx-auto">
           <p className="font-sans text-xs tracking-widest uppercase text-rose mb-3">
-            Place an Order
+            {t.order.tagline}
           </p>
           <h1 className="font-display text-5xl lg:text-6xl text-warm leading-tight mb-4">
-            Let's make your cake.
+            {t.order.heading}
           </h1>
-          <p className="font-sans text-base text-warm/60 max-w-lg leading-relaxed">
-            Complete the form below and we will be in touch within 48 hours to confirm details and
-            availability. All cakes are made to order — minimum six weeks lead time for custom and
-            wedding cakes.
-          </p>
+          <p className="font-sans text-base text-warm/60 max-w-lg leading-relaxed">{t.order.sub}</p>
         </div>
       </section>
 
       {/* How it works strip */}
       <section className="bg-cream py-12 px-6 lg:px-8 border-b border-espresso/8">
         <div ref={stepsRef} className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
-          {steps.map(({ n, title, body }) => (
-            <div key={n} className="flex gap-4">
+          {t.order.steps.map(({ title, body }, i) => (
+            <div key={i} className="flex gap-4">
               <span className="font-display text-3xl text-rose/40 leading-none flex-shrink-0">
-                {n}
+                0{i + 1}
               </span>
               <div>
                 <h3 className="font-display text-lg text-espresso mb-1">{title}</h3>
@@ -66,35 +46,34 @@ export function OrderPage() {
           {/* Left sidebar */}
           <div className="lg:col-span-2 space-y-8">
             <div>
-              <h2 className="font-display text-3xl text-espresso mb-3">Order details</h2>
+              <h2 className="font-display text-3xl text-espresso mb-3">{t.order.formHeading}</h2>
               <p className="font-sans text-sm text-espresso/55 leading-relaxed">
-                The more detail you give us the better. Don't worry about being too specific — we
-                can always adjust at the consultation stage.
+                {t.order.formSub}
               </p>
             </div>
 
             <div className="space-y-5 border-t border-espresso/10 pt-6">
               <div>
                 <p className="font-sans text-xs font-medium tracking-widest uppercase text-espresso/40 mb-1">
-                  Response time
+                  {t.order.responseTime}
                 </p>
-                <p className="font-sans text-sm text-espresso/70">Within 48 hours</p>
+                <p className="font-sans text-sm text-espresso/70">{t.order.responseTimeValue}</p>
               </div>
               <div>
                 <p className="font-sans text-xs font-medium tracking-widest uppercase text-espresso/40 mb-1">
-                  Lead time
+                  {t.order.leadTime}
                 </p>
-                <p className="font-sans text-sm text-espresso/70">6 weeks minimum</p>
+                <p className="font-sans text-sm text-espresso/70">{t.order.leadTimeValue}</p>
               </div>
               <div>
                 <p className="font-sans text-xs font-medium tracking-widest uppercase text-espresso/40 mb-1">
-                  Not sure yet?
+                  {t.order.notSure}
                 </p>
                 <Link
                   to="/menu"
                   className="font-sans text-sm text-rose hover:text-rose-dark transition-colors"
                 >
-                  Browse the menu →
+                  {t.order.browseMenu}
                 </Link>
               </div>
             </div>

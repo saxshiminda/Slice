@@ -1,8 +1,10 @@
 import { ContactForm } from '@/features/contact';
 import { useFadeIn } from '@/hooks/use-fade-in';
+import { useT } from '@/i18n';
 
 export function ContactPage() {
   const ref = useFadeIn<HTMLDivElement>();
+  const t = useT();
 
   return (
     <main className="min-h-screen pt-16 lg:pt-20">
@@ -11,34 +13,30 @@ export function ContactPage() {
           {/* Left — intro text */}
           <div>
             <p className="font-sans text-xs tracking-widest uppercase text-espresso/40 mb-3">
-              Get in Touch
+              {t.contact.tagline}
             </p>
             <h1 className="font-display text-5xl lg:text-6xl text-espresso leading-tight mb-8">
-              Tell us about your celebration.
+              {t.contact.heading}
             </h1>
             <p className="font-sans text-base text-espresso/60 leading-relaxed mb-5">
-              Whether you are planning a wedding, a milestone birthday, or simply want a beautiful
-              cake for a weekend gathering — we would love to hear from you.
+              {t.contact.body1}
             </p>
             <p className="font-sans text-base text-espresso/60 leading-relaxed mb-5">
-              Fill in the form and we will get back to you within 48 hours. For seasonal
-              availability, we recommend reaching out at least six weeks in advance.
+              {t.contact.body2}
             </p>
 
             <div className="mt-10 space-y-4 border-t border-espresso/10 pt-8">
               <div>
                 <p className="font-sans text-xs font-medium tracking-widest uppercase text-espresso/40 mb-1">
-                  Response Time
+                  {t.contact.responseTime}
                 </p>
-                <p className="font-sans text-sm text-espresso/70">Within 48 hours</p>
+                <p className="font-sans text-sm text-espresso/70">{t.contact.responseTimeValue}</p>
               </div>
               <div>
                 <p className="font-sans text-xs font-medium tracking-widest uppercase text-espresso/40 mb-1">
-                  Lead Time
+                  {t.contact.leadTime}
                 </p>
-                <p className="font-sans text-sm text-espresso/70">
-                  Minimum 6 weeks for custom orders
-                </p>
+                <p className="font-sans text-sm text-espresso/70">{t.contact.leadTimeValue}</p>
               </div>
             </div>
           </div>

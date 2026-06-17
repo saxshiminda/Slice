@@ -6,9 +6,11 @@ import {
   useUpdateCategory,
   useDeleteCategory,
 } from '@/features/admin';
+import { useT } from '@/i18n';
 import type { CategoryWithCount } from '@/types';
 
 export function AdminCategoriesPage() {
+  const t = useT();
   const { data: categories, isLoading } = useAdminCategories();
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
@@ -37,11 +39,11 @@ export function AdminCategoriesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this category? Cakes must be reassigned first.')) return;
+    if (!confirm(t.admin.categories.confirmDelete)) return;
     try {
       await deleteCategory.mutateAsync(id);
     } catch {
-      alert('Cannot delete a category that has cakes assigned.');
+      alert(t.admin.categories.cannotDelete);
     }
   }
 
@@ -55,22 +57,20 @@ export function AdminCategoriesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl text-espresso mb-2">Categories</h1>
-      <p className="font-sans text-sm text-espresso/50 mb-8">
-        Organise cakes into collections. Each cake must belong to one category.
-      </p>
+      <h1 className="font-display text-3xl text-espresso mb-2">{t.admin.categories.title}</h1>
+      <p className="font-sans text-sm text-espresso/50 mb-8">{t.admin.categories.subtitle}</p>
 
       <form onSubmit={handleCreate} className="flex gap-3 mb-8">
         <div className="flex-1">
           <Input
-            label="New category name"
+            label={t.admin.categories.newCategoryName}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="e.g. Celebration"
           />
         </div>
         <Button type="submit" loading={createCategory.isPending} className="self-end">
-          Add
+          {t.common.add}
         </Button>
       </form>
 
@@ -78,10 +78,10 @@ export function AdminCategoriesPage() {
         <table className="w-full text-sm font-sans">
           <thead>
             <tr className="border-b border-espresso/10 text-left text-espresso/50">
-              <th className="p-4 font-medium">Name</th>
-              <th className="p-4 font-medium">Slug</th>
-              <th className="p-4 font-medium">Cakes</th>
-              <th className="p-4 font-medium">Actions</th>
+              <th className="p-4 font-medium">{t.admin.categories.name}</th>
+              <th className="p-4 font-medium">{t.admin.categories.slug}</th>
+              <th className="p-4 font-medium">{t.admin.categories.cakes}</th>
+              <th className="p-4 font-medium">{t.admin.categories.actions}</th>
             </tr>
           </thead>
           <tbody>
@@ -109,14 +109,14 @@ export function AdminCategoriesPage() {
                           onClick={() => saveEdit(cat.id)}
                           className="text-rose hover:text-rose-dark"
                         >
-                          Save
+                          {t.common.save}
                         </button>
                         <button
                           type="button"
                           onClick={() => setEditingId(null)}
                           className="text-espresso/40"
                         >
-                          Cancel
+                          {t.common.cancel}
                         </button>
                       </>
                     ) : (
@@ -126,14 +126,14 @@ export function AdminCategoriesPage() {
                           onClick={() => startEdit(cat)}
                           className="text-rose hover:text-rose-dark"
                         >
-                          Edit
+                          {t.common.edit}
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(cat.id)}
                           className="text-espresso/40 hover:text-red-500"
                         >
-                          Delete
+                          {t.common.delete}
                         </button>
                       </>
                     )}

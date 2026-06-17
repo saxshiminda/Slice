@@ -2,16 +2,12 @@ import { useState } from 'react';
 import { z } from 'zod';
 import { Button, Input, Textarea } from '@/components/ui';
 import { useSubmitInquiry } from '../hooks';
+import { useT } from '@/i18n';
 
-const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Please enter a valid email'),
-  message: z.string().min(10, 'Message must be at least 10 characters'),
-});
-
-type FormErrors = Partial<Record<keyof z.infer<typeof schema>, string>>;
+type FormErrors = Partial<Record<'name' | 'email' | 'message', string>>;
 
 export function ContactForm() {
+  const t = useT();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -21,6 +17,12 @@ export function ContactForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const schema = z.object({
+      name: z.string().min(1, t.contact.form.name),
+      email: z.string().email(t.contact.form.email),
+      message: z.string().min(10, t.contact.form.message),
+    });
 
     const result = schema.safeParse({ name, email, message });
     if (!result.success) {
@@ -50,9 +52,9 @@ export function ContactForm() {
             />
           </svg>
         </div>
-        <h3 className="font-display text-2xl text-espresso mb-3">Message Received</h3>
+        <h3 className="font-display text-2xl text-espresso mb-3">{t.contact.form.successTitle}</h3>
         <p className="text-sm text-espresso/60 font-sans max-w-sm mx-auto leading-relaxed">
-          Thank you for getting in touch. We will be in contact with you shortly.
+          {t.contact.form.successBody}
         </p>
       </div>
     );
@@ -61,38 +63,36 @@ export function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
       <Input
-        label="Your name"
+        label={t.contact.form.name}
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Jane Smith"
+        placeholder={t.contact.form.namePlaceholder}
         error={errors.name}
         autoComplete="name"
       />
       <Input
-        label="Email address"
+        label={t.contact.form.email}
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="jane@example.com"
+        placeholder={t.contact.form.emailPlaceholder}
         error={errors.email}
         autoComplete="email"
       />
       <Textarea
-        label="Message"
+        label={t.contact.form.message}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder="Tell us about your event, preferred flavours, or any questions you have…"
+        placeholder={t.contact.form.messagePlaceholder}
         rows={6}
         error={errors.message}
       />
 
-      {mutation.isError && (
-        <p className="text-sm text-red-500">Something went wrong. Please try again.</p>
-      )}
+      {mutation.isError && <p className="text-sm text-red-500">{t.contact.form.error}</p>}
 
       <Button type="submit" loading={mutation.isPending} className="self-start">
-        Send Enquiry
+        {t.contact.form.submit}
       </Button>
     </form>
   );

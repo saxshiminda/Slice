@@ -8,6 +8,7 @@ import {
   filterAndSortCakes,
   type SortOption,
 } from '@/features/menu';
+import { useT } from '@/i18n';
 
 const SKELETON_COUNT = 6;
 
@@ -15,6 +16,7 @@ export function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortOption>('default');
+  const t = useT();
 
   const { data: categories = [] } = useCategories();
   const { data, isLoading, isError } = useCakes({
@@ -35,12 +37,11 @@ export function MenuPage() {
     <main className="min-h-screen pt-16 lg:pt-20">
       <section className="py-16 lg:py-24 px-6 lg:px-8 max-w-6xl mx-auto">
         <p className="font-sans text-xs tracking-widest uppercase text-espresso/40 mb-3">
-          Our Cakes
+          {t.menu.ourCakes}
         </p>
-        <h1 className="font-display text-5xl lg:text-6xl text-espresso mb-4">The Menu</h1>
+        <h1 className="font-display text-5xl lg:text-6xl text-espresso mb-4">{t.menu.heading}</h1>
         <p className="font-sans text-base text-espresso/60 max-w-lg leading-relaxed">
-          All cakes are made to order. Prices shown are a guide — bespoke sizing, flavours, and
-          decoration are always available on request.
+          {t.menu.tagline}
         </p>
       </section>
 
@@ -69,19 +70,15 @@ export function MenuPage() {
 
         {isError && (
           <div className="text-center py-24">
-            <p className="font-sans text-espresso/50 text-sm">
-              Could not load cakes. Please try again.
-            </p>
+            <p className="font-sans text-espresso/50 text-sm">{t.menu.loadError}</p>
           </div>
         )}
 
         {data && displayedCakes.length === 0 && (
           <div className="text-center py-24">
-            <p className="font-display text-2xl text-espresso/40 mb-2">Nothing here yet</p>
+            <p className="font-display text-2xl text-espresso/40 mb-2">{t.menu.nothingHere}</p>
             <p className="font-sans text-sm text-espresso/40">
-              {search
-                ? 'No cakes match your search. Try a different term.'
-                : 'No cakes found in this category.'}
+              {search ? t.menu.noResults : t.menu.noCategory}
             </p>
           </div>
         )}
@@ -89,9 +86,10 @@ export function MenuPage() {
         {data && displayedCakes.length > 0 && (
           <>
             <p className="font-sans text-xs text-espresso/40 mb-8">
-              {displayedCakes.length} of {data.total} {data.total === 1 ? 'cake' : 'cakes'}
-              {categoryLabel ? ` in ${categoryLabel}` : ''}
-              {search ? ` matching "${search}"` : ''}
+              {displayedCakes.length} {t.menu.of} {data.total}{' '}
+              {data.total === 1 ? t.menu.showing : t.menu.showingPlural}
+              {categoryLabel ? ` ${t.menu.in} ${categoryLabel}` : ''}
+              {search ? ` ${t.menu.matching} "${search}"` : ''}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
               {displayedCakes.map((cake) => (

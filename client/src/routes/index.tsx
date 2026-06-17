@@ -6,6 +6,11 @@ import { CakeDetailPage } from '@/pages/cake-detail-page';
 import { AboutPage } from '@/pages/about-page';
 import { ContactPage } from '@/pages/contact-page';
 import { OrderPage } from '@/pages/order-page';
+import { CheckoutPage } from '@/pages/checkout-page';
+import { OrderConfirmationPage } from '@/pages/order-confirmation-page';
+import { AccountPage } from '@/pages/account-page';
+import { PrivacyPage } from '@/pages/privacy-page';
+import { DeliveryPage } from '@/pages/delivery-page';
 import { NotFoundPage } from '@/pages/not-found-page';
 import { ErrorPage } from '@/pages/error-page';
 import { AdminProtectedRoute } from '@/components/admin-protected-route';
@@ -15,6 +20,10 @@ import { AdminCakesPage } from '@/pages/admin/admin-cakes-page';
 import { AdminCategoriesPage } from '@/pages/admin/admin-categories-page';
 import { AdminOrdersPage } from '@/pages/admin/admin-orders-page';
 import { AdminInquiriesPage } from '@/pages/admin/admin-inquiries-page';
+import { AdminShopOrdersPage } from '@/pages/admin/admin-shop-orders-page';
+import { AdminDeliverySettingsPage } from '@/pages/admin/admin-delivery-settings-page';
+import { AdminBranchesPage } from '@/pages/admin/admin-branches-page';
+import { AdminSiteConfigPage } from '@/pages/admin/admin-site-config-page';
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +37,11 @@ export const router = createBrowserRouter([
       { path: 'about', element: <AboutPage /> },
       { path: 'contact', element: <ContactPage /> },
       { path: 'order', element: <OrderPage /> },
+      { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'order-confirmation/:id', element: <OrderConfirmationPage /> },
+      { path: 'account', element: <AccountPage /> },
+      { path: 'privacy', element: <PrivacyPage /> },
+      { path: 'delivery', element: <DeliveryPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
@@ -45,8 +59,12 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to="cakes" replace /> },
           { path: 'cakes', element: <AdminCakesPage /> },
           { path: 'categories', element: <AdminCategoriesPage /> },
+          { path: 'shop-orders', element: <AdminShopOrdersPage /> },
           { path: 'orders', element: <AdminOrdersPage /> },
           { path: 'inquiries', element: <AdminInquiriesPage /> },
+          { path: 'branches', element: <AdminBranchesPage /> },
+          { path: 'delivery-settings', element: <AdminDeliverySettingsPage /> },
+          { path: 'site-config', element: <AdminSiteConfigPage /> },
         ],
       },
     ],

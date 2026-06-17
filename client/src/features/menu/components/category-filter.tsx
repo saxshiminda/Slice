@@ -1,4 +1,5 @@
 import type { Category } from '@/types';
+import { useT } from '@/i18n';
 
 interface Props {
   categories: Category[];
@@ -7,7 +8,8 @@ interface Props {
 }
 
 export function CategoryFilter({ categories, selected, onChange }: Props) {
-  const options = [{ slug: 'all', name: 'All' }, ...categories];
+  const t = useT();
+  const options = [{ slug: 'all', name: t.menu.all }, ...categories];
 
   return (
     <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">

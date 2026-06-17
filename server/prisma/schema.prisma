@@ -20,17 +20,30 @@ model Category {
 }
 
 model Cake {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String
-  price       Float
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  imageUrl    String
-  featured    Boolean  @default(false)
-  available   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String           @id @default(cuid())
+  name           String           @unique
+  description    String
+  price          Float
+  compareAtPrice Float?
+  categoryId     String
+  category       Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  imageUrl       String
+  featured       Boolean          @default(false)
+  available      Boolean          @default(true)
+  variants       ProductVariant[]
+  orderItems     ShopOrderItem[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model ProductVariant {
+  id        String   @id @default(cuid())
+  cakeId    String
+  cake      Cake     @relation(fields: [cakeId], references: [id], onDelete: Cascade)
+  name      String
+  price     Float
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 model Inquiry {
@@ -41,6 +54,7 @@ model Inquiry {
   createdAt DateTime @default(now())
 }
 
+// Bespoke / custom cake request (original flow — kept intact)
 model Order {
   id         String    @id @default(cuid())
   name       String
@@ -52,4 +66,114 @@ model Order {
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   details    String
   createdAt  DateTime  @default(now())
+}
+
+// ─── Retail e-commerce ───────────────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CONFIRMED
+  READY
+  DELIVERED
+  CANCELLED
+}
+
+enum FulfillmentType {
+  PICKUP
+  DELIVERY
+}
+
+model ShopOrder {
+  id              String          @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  status          OrderStatus     @default(PENDING)
+  fulfillmentType FulfillmentType @default(PICKUP)
+  subtotal        Float
+  deliveryFee     Float           @default(0)
+  total           Float
+  paymentId       String?
+  paymentMethod   String?
+  notes           String?
+  pickupDate      DateTime?
+  pickupSlot      String?
+  deliveryAddress String?
+  branchId        String?
+  branch          Branch?         @relation(fields: [branchId], references: [id])
+  customerId      String?
+  customer        Customer?       @relation(fields: [customerId], references: [id])
+  items           ShopOrderItem[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model ShopOrderItem {
+  id          String    @id @default(cuid())
+  orderId     String
+  order       ShopOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  cakeId      String
+  cake        Cake      @relation(fields: [cakeId], references: [id])
+  cakeName    String
+  variantName String?
+  quantity    Int
+  unitPrice   Float
+  total       Float
+  createdAt   DateTime  @default(now())
+}
+
+// ─── Bakery operations ────────────────────────────────────────────────────────
+
+model Branch {
+  id              String      @id @default(cuid())
+  name            String
+  address         String
+  phone           String?
+  pickupAvailable Boolean     @default(true)
+  active          Boolean     @default(true)
+  orders          ShopOrder[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model TimeSlot {
+  id        String   @id @default(cuid())
+  label     String
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// Single-row delivery & ordering config (id = "singleton")
+model DeliverySettings {
+  id                    String   @id @default("singleton")
+  minOrderAmount        Float    @default(0)
+  deliveryFee           Float    @default(5)
+  freeDeliveryThreshold Float?
+  deliveryAvailable     Boolean  @default(true)
+  pickupAvailable       Boolean  @default(true)
+  updatedAt             DateTime @updatedAt
+}
+
+// ─── Site configuration ───────────────────────────────────────────────────────
+
+// Single-row config (id = "singleton")
+model SiteConfig {
+  id       String @id @default("singleton")
+  siteMode String @default("both")
+  siteName String @default("Slice")
+}
+
+// ─── Customer accounts ────────────────────────────────────────────────────────
+
+model Customer {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  phone        String?
+  passwordHash String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  orders       ShopOrder[]
 }

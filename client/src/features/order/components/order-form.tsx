@@ -1,24 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { z } from 'zod';
 import { Button, Input } from '@/components/ui';
 import { useCategories } from '@/features/menu';
 import { useSubmitOrder } from '../hooks';
 import type { OrderInput } from '../hooks';
-
-const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Please enter a valid email'),
-  eventType: z.string().min(1, 'Please select an event type'),
-  eventDate: z.string().min(1, 'Please provide an event date'),
-  servings: z.string().min(1, 'Please select a serving size'),
-  categoryId: z.string().min(1, 'Please select a cake category'),
-  details: z.string(),
-});
+import { useT } from '@/i18n';
 
 type FormErrors = Partial<Record<keyof OrderInput, string>>;
-
-const eventTypes = ['Wedding', 'Birthday', 'Anniversary', 'Corporate', 'Christening', 'Other'];
-const servingOptions = ['Up to 20', '20–40', '40–80', '80–120', '120+'];
 
 interface SelectFieldProps {
   label: string;
@@ -57,7 +46,11 @@ function SelectField({ label, value, onChange, options, placeholder, error }: Se
 }
 
 export function OrderForm() {
+  const t = useT();
   const { data: categories = [] } = useCategories();
+  const [searchParams] = useSearchParams();
+  const cakeFromUrl = searchParams.get('cake');
+
   const [form, setForm] = useState<OrderInput>({
     name: '',
     email: '',
@@ -65,10 +58,19 @@ export function OrderForm() {
     eventDate: '',
     servings: '',
     categoryId: '',
-    details: '',
+    details: cakeFromUrl ? `I would like to order a cake in the style of: ${cakeFromUrl}` : '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const mutation = useSubmitOrder();
+
+  useEffect(() => {
+    if (cakeFromUrl) {
+      setForm((f) => ({
+        ...f,
+        details: f.details || `I would like to order a cake in the style of: ${cakeFromUrl}`,
+      }));
+    }
+  }, [cakeFromUrl]);
 
   function set(field: keyof OrderInput) {
     return (value: string) => setForm((prev) => ({ ...prev, [field]: value }));
@@ -76,6 +78,17 @@ export function OrderForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    const schema = z.object({
+      name: z.string().min(1),
+      email: z.string().email(),
+      eventType: z.string().min(1),
+      eventDate: z.string().min(1),
+      servings: z.string().min(1),
+      categoryId: z.string().min(1),
+      details: z.string(),
+    });
+
     const result = schema.safeParse(form);
     if (!result.success) {
       const fieldErrors: FormErrors = {};
@@ -103,10 +116,9 @@ export function OrderForm() {
             />
           </svg>
         </div>
-        <h3 className="font-display text-2xl text-espresso mb-3">Order Request Received</h3>
+        <h3 className="font-display text-2xl text-espresso mb-3">{t.order.form.successTitle}</h3>
         <p className="text-sm text-espresso/60 font-sans max-w-sm mx-auto leading-relaxed">
-          Thank you, {form.name}. We will review your request and get back to you within 48 hours to
-          discuss the details.
+          {t.order.form.successBody.replace('{name}', form.name)}
         </p>
       </div>
     );
@@ -116,7 +128,7 @@ export function OrderForm() {
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Input
-          label="Your name"
+          label={t.order.form.name}
           type="text"
           value={form.name}
           onChange={(e) => set('name')(e.target.value)}
@@ -125,7 +137,7 @@ export function OrderForm() {
           autoComplete="name"
         />
         <Input
-          label="Email address"
+          label={t.order.form.email}
           type="email"
           value={form.email}
           onChange={(e) => set('email')(e.target.value)}
@@ -137,15 +149,15 @@ export function OrderForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <SelectField
-          label="Event type"
+          label={t.order.form.eventType}
           value={form.eventType}
           onChange={set('eventType')}
-          options={eventTypes.map((t) => ({ value: t, label: t }))}
-          placeholder="Select event type"
+          options={t.order.form.eventTypes.map((type) => ({ value: type, label: type }))}
+          placeholder={t.order.form.selectEventType}
           error={errors.eventType}
         />
         <Input
-          label="Event date"
+          label={t.order.form.eventDate}
           type="date"
           value={form.eventDate}
           onChange={(e) => set('eventDate')(e.target.value)}
@@ -155,43 +167,42 @@ export function OrderForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <SelectField
-          label="Number of servings"
+          label={t.order.form.servings}
           value={form.servings}
           onChange={set('servings')}
-          options={servingOptions.map((s) => ({ value: s, label: s }))}
-          placeholder="Select serving size"
+          options={t.order.form.servingOptions.map((s) => ({ value: s, label: s }))}
+          placeholder={t.order.form.selectServings}
           error={errors.servings}
         />
         <SelectField
-          label="Cake category"
+          label={t.order.form.category}
           value={form.categoryId}
           onChange={set('categoryId')}
           options={categories.map((c) => ({ value: c.id, label: c.name }))}
-          placeholder="Select category"
+          placeholder={t.order.form.selectCategory}
           error={errors.categoryId}
         />
       </div>
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="details" className="text-sm font-sans font-medium text-espresso/80">
-          Additional details <span className="text-espresso/40 font-normal">(optional)</span>
+          {t.order.form.details}{' '}
+          <span className="text-espresso/40 font-normal">{t.order.form.detailsOptional}</span>
         </label>
         <textarea
           id="details"
           value={form.details}
           onChange={(e) => set('details')(e.target.value)}
-          placeholder="Flavour preferences, dietary requirements, design ideas, colour palette…"
+          placeholder={t.order.form.detailsPlaceholder}
           rows={5}
           className="w-full bg-warm border border-espresso/20 px-4 py-3 text-sm text-espresso placeholder:text-espresso/40 focus:outline-none focus:border-rose transition-colors resize-none"
         />
       </div>
 
-      {mutation.isError && (
-        <p className="text-sm text-red-500">Something went wrong. Please try again.</p>
-      )}
+      {mutation.isError && <p className="text-sm text-red-500">{t.order.form.error}</p>}
 
       <Button type="submit" loading={mutation.isPending} className="self-start mt-1">
-        Submit Order Request
+        {t.order.form.submit}
       </Button>
     </form>
   );

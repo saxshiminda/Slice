@@ -1,5 +1,6 @@
 import { useAdminInquiries } from '@/features/admin';
 import { Spinner } from '@/components/ui';
+import { useT } from '@/i18n';
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', {
@@ -12,6 +13,7 @@ function formatDate(iso: string) {
 }
 
 export function AdminInquiriesPage() {
+  const t = useT();
   const { data: inquiries, isLoading } = useAdminInquiries();
 
   if (isLoading) {
@@ -24,13 +26,11 @@ export function AdminInquiriesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl text-espresso mb-2">Contact enquiries</h1>
-      <p className="font-sans text-sm text-espresso/50 mb-8">
-        Messages submitted via the contact form.
-      </p>
+      <h1 className="font-display text-3xl text-espresso mb-2">{t.admin.inquiries.title}</h1>
+      <p className="font-sans text-sm text-espresso/50 mb-8">{t.admin.inquiries.subtitle}</p>
 
       {!inquiries?.length ? (
-        <p className="font-sans text-sm text-espresso/40">No enquiries yet.</p>
+        <p className="font-sans text-sm text-espresso/40">{t.admin.inquiries.noEnquiries}</p>
       ) : (
         <div className="space-y-4">
           {inquiries.map((inquiry) => (

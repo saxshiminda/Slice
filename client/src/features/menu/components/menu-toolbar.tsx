@@ -1,5 +1,6 @@
 import { CategoryFilter } from './category-filter';
 import type { Category } from '@/types';
+import { useT } from '@/i18n';
 
 export type SortOption = 'default' | 'price-asc' | 'price-desc' | 'name';
 
@@ -13,13 +14,6 @@ interface Props {
   onCategoryChange: (slug: string) => void;
 }
 
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'name', label: 'Name A–Z' },
-  { value: 'price-asc', label: 'Price: low to high' },
-  { value: 'price-desc', label: 'Price: high to low' },
-];
-
 export function MenuToolbar({
   categories,
   search,
@@ -29,17 +23,26 @@ export function MenuToolbar({
   selectedCategory,
   onCategoryChange,
 }: Props) {
+  const t = useT();
+
+  const sortOptions: { value: SortOption; label: string }[] = [
+    { value: 'default', label: t.menu.sort.default },
+    { value: 'name', label: t.menu.sort.nameAz },
+    { value: 'price-asc', label: t.menu.sort.priceLow },
+    { value: 'price-desc', label: t.menu.sort.priceHigh },
+  ];
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <label htmlFor="menu-search" className="sr-only">
-            Search cakes
+            {t.menu.search}
           </label>
           <input
             id="menu-search"
             type="search"
-            placeholder="Search cakes…"
+            placeholder={t.menu.search}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full bg-warm border border-espresso/20 px-4 py-3 text-sm text-espresso placeholder:text-espresso/40 focus:outline-none focus:border-rose transition-colors"
@@ -47,7 +50,7 @@ export function MenuToolbar({
         </div>
         <div className="sm:w-52">
           <label htmlFor="sort-select" className="sr-only">
-            Sort cakes
+            {t.menu.sortLabel}
           </label>
           <select
             id="sort-select"

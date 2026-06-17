@@ -19,4 +19,19 @@ export const env = {
   adminUsername: process.env['ADMIN_USERNAME'] ?? 'admin',
   adminPassword: process.env['ADMIN_PASSWORD'] ?? '123',
   uploadDir: process.env['UPLOAD_DIR'] ?? 'uploads',
+
+  // Email (Resend) — optional; logs to console when absent
+  resendApiKey: process.env['RESEND_API_KEY'],
+  emailFrom: process.env['EMAIL_FROM'] ?? 'Slice Bakery <noreply@example.com>',
+  emailBakery: process.env['EMAIL_BAKERY'] ?? '',
+
+  // Payment gateway — BoG iPay v2
+  // When BOG_CLIENT_ID is not set the app runs in mock-payment mode.
+  bogClientId: process.env['BOG_CLIENT_ID'],
+  bogClientSecret: process.env['BOG_CLIENT_SECRET'],
+  bogMockPayment: process.env['BOG_MOCK_PAYMENT'] !== 'false',
+
+  // Customer JWT (separate from admin JWT)
+  customerJwtSecret:
+    process.env['CUSTOMER_JWT_SECRET'] ?? 'slice-customer-dev-secret-change-in-production',
 };
