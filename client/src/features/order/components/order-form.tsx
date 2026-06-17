@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { z } from 'zod';
 import { Button, Input } from '@/components/ui';
+import { useCategories } from '@/features/menu';
 import { useSubmitOrder } from '../hooks';
 import type { OrderInput } from '../hooks';
 
@@ -10,7 +11,7 @@ const schema = z.object({
   eventType: z.string().min(1, 'Please select an event type'),
   eventDate: z.string().min(1, 'Please provide an event date'),
   servings: z.string().min(1, 'Please select a serving size'),
-  cakeCategory: z.string().min(1, 'Please select a cake category'),
+  categoryId: z.string().min(1, 'Please select a cake category'),
   details: z.string(),
 });
 
@@ -18,13 +19,12 @@ type FormErrors = Partial<Record<keyof OrderInput, string>>;
 
 const eventTypes = ['Wedding', 'Birthday', 'Anniversary', 'Corporate', 'Christening', 'Other'];
 const servingOptions = ['Up to 20', '20–40', '40–80', '80–120', '120+'];
-const cakeCategories = ['Wedding', 'Birthday', 'Seasonal', 'Custom'];
 
 interface SelectFieldProps {
   label: string;
   value: string;
   onChange: (v: string) => void;
-  options: string[];
+  options: { value: string; label: string }[];
   placeholder: string;
   error?: string;
 }
@@ -46,8 +46,8 @@ function SelectField({ label, value, onChange, options, placeholder, error }: Se
           {placeholder}
         </option>
         {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
+          <option key={o.value} value={o.value}>
+            {o.label}
           </option>
         ))}
       </select>
@@ -57,13 +57,14 @@ function SelectField({ label, value, onChange, options, placeholder, error }: Se
 }
 
 export function OrderForm() {
+  const { data: categories = [] } = useCategories();
   const [form, setForm] = useState<OrderInput>({
     name: '',
     email: '',
     eventType: '',
     eventDate: '',
     servings: '',
-    cakeCategory: '',
+    categoryId: '',
     details: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -139,7 +140,7 @@ export function OrderForm() {
           label="Event type"
           value={form.eventType}
           onChange={set('eventType')}
-          options={eventTypes}
+          options={eventTypes.map((t) => ({ value: t, label: t }))}
           placeholder="Select event type"
           error={errors.eventType}
         />
@@ -157,17 +158,17 @@ export function OrderForm() {
           label="Number of servings"
           value={form.servings}
           onChange={set('servings')}
-          options={servingOptions}
+          options={servingOptions.map((s) => ({ value: s, label: s }))}
           placeholder="Select serving size"
           error={errors.servings}
         />
         <SelectField
           label="Cake category"
-          value={form.cakeCategory}
-          onChange={set('cakeCategory')}
-          options={cakeCategories}
+          value={form.categoryId}
+          onChange={set('categoryId')}
+          options={categories.map((c) => ({ value: c.id, label: c.name }))}
           placeholder="Select category"
-          error={errors.cakeCategory}
+          error={errors.categoryId}
         />
       </div>
 

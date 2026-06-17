@@ -1,1 +1,1 @@
-export type { Cake, CakeCategory } from '@/types';
+export type { Cake, Category } from '@/types';

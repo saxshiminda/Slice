@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useFadeIn } from '@/hooks/use-fade-in';
-import { Card, Badge } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { CategoryBadge } from './category-badge';
+import { resolveImageSrc } from '@/lib/images';
 import type { Cake } from '@/types';
 
 interface Props {
@@ -17,7 +19,7 @@ export function CakeCard({ cake }: Props) {
           {/* Fixed-height image — always 240px regardless of source aspect ratio */}
           <div className="h-60 flex-shrink-0 overflow-hidden bg-warm">
             <img
-              src={cake.imageUrl}
+              src={resolveImageSrc(cake.imageUrl)}
               alt={cake.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
@@ -26,7 +28,7 @@ export function CakeCard({ cake }: Props) {
           <div className="p-5 lg:p-6 flex flex-col flex-1">
             <div className="flex items-start justify-between gap-3 mb-2">
               <h3 className="font-display text-lg text-espresso leading-snug">{cake.name}</h3>
-              <Badge category={cake.category} />
+              <CategoryBadge category={cake.category} />
             </div>
             <p className="text-sm text-espresso/60 leading-relaxed line-clamp-3 font-sans flex-1">
               {cake.description}

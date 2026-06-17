@@ -1,17 +1,16 @@
 import { CategoryFilter } from './category-filter';
-import type { CakeCategory } from '@/types';
+import type { Category } from '@/types';
 
 export type SortOption = 'default' | 'price-asc' | 'price-desc' | 'name';
 
-type FilterOption = CakeCategory | 'All';
-
 interface Props {
+  categories: Category[];
   search: string;
   onSearchChange: (value: string) => void;
   sort: SortOption;
   onSortChange: (value: SortOption) => void;
-  selectedCategory: FilterOption;
-  onCategoryChange: (category: FilterOption) => void;
+  selectedCategory: string;
+  onCategoryChange: (slug: string) => void;
 }
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -22,6 +21,7 @@ const sortOptions: { value: SortOption; label: string }[] = [
 ];
 
 export function MenuToolbar({
+  categories,
   search,
   onSearchChange,
   sort,
@@ -64,7 +64,11 @@ export function MenuToolbar({
         </div>
       </div>
 
-      <CategoryFilter selected={selectedCategory} onChange={onCategoryChange} />
+      <CategoryFilter
+        categories={categories}
+        selected={selectedCategory}
+        onChange={onCategoryChange}
+      />
     </div>
   );
 }

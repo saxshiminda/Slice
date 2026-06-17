@@ -1,1 +1,9 @@
-export type { Cake, Inquiry, CakeCategory, ApiResponse } from './cake';
+export type {
+  Cake,
+  Category,
+  CategoryWithCount,
+  Inquiry,
+  Order,
+  ApiResponse,
+  LoginResponse,
+} from './cake';

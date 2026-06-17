@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import type { ApiResponse, Cake, CakeCategory } from '@/types';
+import type { ApiResponse, Cake } from '@/types';
 
 interface UseCakesParams {
-  category?: CakeCategory | 'All';
+  category?: string;
   featured?: boolean;
 }
 
 export function useCakes({ category, featured }: UseCakesParams = {}) {
   const params = new URLSearchParams();
-  if (category && category !== 'All') params.set('category', category);
+  if (category && category !== 'all') params.set('category', category);
   if (featured) params.set('featured', 'true');
 
   const queryString = params.toString();
