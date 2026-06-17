@@ -87,7 +87,6 @@ function OrdersTab() {
 
   return (
     <div className="space-y-4">
-      123
       {orders.map((order) => (
         <div key={order.id} className="bg-cream border border-espresso/10">
           {/* Order header */}
