@@ -15,4 +15,8 @@ export const env = {
   nodeEnv: (process.env['NODE_ENV'] ?? 'development') as 'development' | 'production' | 'test',
   /** When set, Express serves the built client and SPA fallback (production). */
   staticDir: process.env['STATIC_DIR'],
+  jwtSecret: process.env['JWT_SECRET'] ?? 'slice-dev-secret-change-in-production',
+  adminUsername: process.env['ADMIN_USERNAME'] ?? 'admin',
+  adminPassword: process.env['ADMIN_PASSWORD'] ?? '123',
+  uploadDir: process.env['UPLOAD_DIR'] ?? 'uploads',
 };

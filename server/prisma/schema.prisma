@@ -9,12 +9,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  cakes     Cake[]
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Cake {
   id          String   @id @default(cuid())
   name        String   @unique
   description String
   price       Float
-  category    String   // "Wedding" | "Birthday" | "Seasonal" | "Custom"
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   imageUrl    String
   featured    Boolean  @default(false)
   available   Boolean  @default(true)
@@ -28,4 +39,17 @@ model Inquiry {
   email     String
   message   String
   createdAt DateTime @default(now())
+}
+
+model Order {
+  id         String    @id @default(cuid())
+  name       String
+  email      String
+  eventType  String
+  eventDate  String
+  servings   String
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  details    String
+  createdAt  DateTime  @default(now())
 }
