@@ -20,15 +20,17 @@ A production-quality bakery portfolio site built as a full-stack monorepo. Soft 
 
 ## Pages
 
-| Route       | Description                                      |
-| ----------- | ------------------------------------------------ |
-| `/`         | Home — hero, featured cakes, brand story         |
-| `/menu`     | Full menu with category filter, search, and sort |
-| `/menu/:id` | Cake detail — full description and order CTA     |
-| `/about`    | Brand story and values                           |
-| `/contact`  | General enquiry form                             |
-| `/order`    | Structured order request form                    |
-| `*`         | Styled 404 page                                  |
+| Route          | Description                                      |
+| -------------- | ------------------------------------------------ |
+| `/`            | Home — hero, featured cakes, brand story         |
+| `/menu`        | Full menu with category filter, search, and sort |
+| `/menu/:id`    | Cake detail — full description and order CTA     |
+| `/about`       | Brand story and values                           |
+| `/contact`     | General enquiry form                             |
+| `/order`       | Structured order request form                    |
+| `/admin/login` | Admin sign-in                                    |
+| `/admin`       | Admin panel (redirects to cakes)                 |
+| `*`            | Styled 404 page                                  |
 
 ## Project Structure
 
@@ -146,14 +148,17 @@ STATIC_DIR=../client/dist NODE_ENV=production npm start
 
 ## Environment Variables
 
-| Variable       | Description                            | Default                                            |
-| -------------- | -------------------------------------- | -------------------------------------------------- |
-| `DATABASE_URL` | PostgreSQL connection string           | `postgresql://slice:slice@localhost:5432/slice_db` |
-| `PORT`         | Express server port                    | `3001`                                             |
-| `CLIENT_URL`   | CORS-allowed origin                    | `http://localhost:5173`                            |
-| `NODE_ENV`     | Runtime environment                    | `development`                                      |
-| `STATIC_DIR`   | Path to built client (production only) | unset                                              |
-| `VITE_API_URL` | Client-side API base URL               | `http://localhost:3001`                            |
+| Variable         | Description                            | Default                                            |
+| ---------------- | -------------------------------------- | -------------------------------------------------- |
+| `DATABASE_URL`   | PostgreSQL connection string           | `postgresql://slice:slice@localhost:5432/slice_db` |
+| `PORT`           | Express server port                    | `3001`                                             |
+| `CLIENT_URL`     | CORS-allowed origin                    | `http://localhost:5173`                            |
+| `NODE_ENV`       | Runtime environment                    | `development`                                      |
+| `STATIC_DIR`     | Path to built client (production only) | unset                                              |
+| `JWT_SECRET`     | Secret for signing admin JWTs          | dev default (change in production)                 |
+| `ADMIN_USERNAME` | Admin login username                   | `admin`                                            |
+| `ADMIN_PASSWORD` | Admin login password                   | `123`                                              |
+| `VITE_API_URL`   | Client-side API base URL               | `http://localhost:3001`                            |
 
 > When running via Docker Compose, `DATABASE_URL` uses `db` (the service name) as host instead of `localhost`.
 >
@@ -202,12 +207,25 @@ All responses use the envelope format:
 { "data": ..., "meta": { "total": 12 } }
 ```
 
-| Method | Endpoint         | Description                                                    |
-| ------ | ---------------- | -------------------------------------------------------------- |
-| GET    | `/api/health`    | Health check                                                   |
-| GET    | `/api/cakes`     | List available cakes. Query: `?category=Wedding&featured=true` |
-| GET    | `/api/cakes/:id` | Single cake detail                                             |
-| POST   | `/api/inquiries` | Submit a contact enquiry                                       |
+| Method | Endpoint                    | Description                                                    |
+| ------ | --------------------------- | -------------------------------------------------------------- |
+| GET    | `/api/health`               | Health check                                                   |
+| GET    | `/api/categories`           | List all categories (public)                                   |
+| GET    | `/api/cakes`                | List available cakes. Query: `?category=wedding&featured=true` |
+| GET    | `/api/cakes/:id`            | Single cake detail                                             |
+| POST   | `/api/inquiries`            | Submit a contact enquiry                                       |
+| POST   | `/api/orders`               | Submit a structured order request                              |
+| POST   | `/api/auth/login`           | Admin login — returns JWT                                      |
+| GET    | `/api/admin/cakes`          | List all cakes (auth required)                                 |
+| POST   | `/api/admin/cakes`          | Create cake (auth required)                                    |
+| PATCH  | `/api/admin/cakes/:id`      | Update cake (auth required)                                    |
+| DELETE | `/api/admin/cakes/:id`      | Delete cake (auth required)                                    |
+| GET    | `/api/admin/categories`     | List categories with cake counts (auth required)               |
+| POST   | `/api/admin/categories`     | Create category (auth required)                                |
+| PATCH  | `/api/admin/categories/:id` | Update category (auth required)                                |
+| DELETE | `/api/admin/categories/:id` | Delete category (auth required)                                |
+| GET    | `/api/admin/orders`         | List order requests (auth required)                            |
+| GET    | `/api/admin/inquiries`      | List contact enquiries (auth required)                         |
 
 ### POST /api/inquiries body
 
@@ -257,13 +275,27 @@ GitHub Actions runs on push/PR to `main` or `master`:
 
 See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
+## Admin Panel
+
+Sign in at **http://localhost:5173/admin/login**
+
+| Credential | Value   |
+| ---------- | ------- |
+| Username   | `admin` |
+| Password   | `123`   |
+
+From the admin panel you can:
+
+- **Cakes** — create, edit, delete menu items; assign categories; toggle featured/available
+- **Categories** — CRUD for cake collections (cakes must be reassigned before deleting a category)
+- **Orders** — view structured order requests from `/order`
+- **Contact** — view general enquiries from `/contact`
+
+Override credentials via `ADMIN_USERNAME` and `ADMIN_PASSWORD` in `.env`.
+
 ## Adding Auth
 
-The auth middleware at `server/src/middleware/auth.ts` is a pass-through (`next()`) with a comment indicating where to add JWT verification. All routes that will require auth already import it. To add JWT auth:
-
-1. Install `jsonwebtoken` and `@types/jsonwebtoken`
-2. Replace the pass-through body in `auth.ts` with token verification logic
-3. No route restructuring needed
+Admin JWT auth is implemented at `server/src/middleware/auth.ts`. Protected routes live under `/api/admin/*`. To change token expiry or add roles, edit `server/src/modules/auth/auth.service.ts`.
 
 ## Adding Email (Resend)
 
