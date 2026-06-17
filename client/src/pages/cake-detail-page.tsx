@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 import { useCake } from '@/features/menu/hooks/use-cake';
-import { Badge, Spinner } from '@/components/ui';
+import { CategoryBadge } from '@/features/menu/components/category-badge';
+import { resolveImageSrc } from '@/lib/images';
+import { Spinner } from '@/components/ui';
 import { useFadeIn } from '@/hooks/use-fade-in';
 
 export function CakeDetailPage() {
@@ -49,7 +51,11 @@ export function CakeDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           <div className="overflow-hidden bg-cream aspect-[4/3]">
-            <img src={cake.imageUrl} alt={cake.name} className="w-full h-full object-cover" />
+            <img
+              src={resolveImageSrc(cake.imageUrl)}
+              alt={cake.name}
+              className="w-full h-full object-cover"
+            />
           </div>
 
           <div className="flex flex-col">
@@ -57,7 +63,7 @@ export function CakeDetailPage() {
               <h1 className="font-display text-4xl lg:text-5xl text-espresso leading-tight">
                 {cake.name}
               </h1>
-              <Badge category={cake.category} />
+              <CategoryBadge category={cake.category} />
             </div>
 
             <p className="price text-3xl font-medium text-espresso mb-6">

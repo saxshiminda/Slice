@@ -6,6 +6,26 @@ export const SITE_IMAGES = {
   gallerySlices: '/images/site/gallery-slices.jpg',
 } as const;
 
+export const CAKE_IMAGES = [
+  { slug: 'grand-ivory-wedding', label: 'Grand Ivory Wedding' },
+  { slug: 'blush-peony-wedding', label: 'Blush Peony Wedding' },
+  { slug: 'golden-birthday-celebration', label: 'Golden Birthday' },
+  { slug: 'whimsical-rainbow-smash', label: 'Rainbow Smash' },
+  { slug: 'autumn-spiced-harvest', label: 'Autumn Harvest' },
+  { slug: 'strawberry-midsummer', label: 'Strawberry Midsummer' },
+  { slug: 'bespoke-portrait-cake', label: 'Bespoke Portrait' },
+  { slug: 'floral-cascade-custom', label: 'Floral Cascade' },
+  { slug: 'winter-spice-wedding', label: 'Winter Spice Wedding' },
+] as const;
+
 export function cakeImagePath(slug: string): string {
   return `/images/cakes/${slug}.jpg`;
+}
+
+/** Resolve a stored imageUrl for use in img src. */
+export function resolveImageSrc(url: string): string {
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  const api = import.meta.env['VITE_API_URL'] ?? '';
+  if (url.startsWith('/uploads') && api) return `${api}${url}`;
+  return url;
 }

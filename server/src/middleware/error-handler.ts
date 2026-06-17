@@ -22,6 +22,11 @@ export function errorHandler(
     return;
   }
 
+  if (err instanceof Error && err.message.includes('image')) {
+    res.status(400).json({ error: err.message });
+    return;
+  }
+
   // Unknown error — log internally, never expose stack in response
   console.error('[error]', err);
   res.status(500).json({
